@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess FEN Analyzer</title>
-    
+    <!--
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://code.jquery.com https://unpkg.com https://cdnjs.cloudflare.com; connect-src 'self' /.netlify/functions; img-src 'self' https://chessboardjs.com data:; style-src 'self' 'unsafe-inline' https://unpkg.com;">
+    WARNING: 'unsafe-eval' is used in script-src due to the Stockfish.js WebAssembly module.
+    This is generally not recommended for security. A more secure solution would involve
+    recompiling Stockfish with CSP-compatible flags or using a different method for module loading.
+    -->
     
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     
