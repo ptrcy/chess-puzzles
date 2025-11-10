@@ -208,7 +208,7 @@ function goToMove(moveIndex) {
 function initStockfish() {
     if (typeof Worker !== 'undefined') {
         try {
-            stockfish = new Worker('https://cdn.jsdelivr.net/npm/stockfish@15.0.0/src/stockfish.js');
+            stockfish = new Worker('./public/stockfish/stockfish.wasm');
             
             stockfish.addEventListener('message', function(e) {
                 const line = e.data;
