@@ -208,7 +208,7 @@ function goToMove(moveIndex) {
 function initStockfish() {
     if (typeof Worker !== 'undefined') {
         try {
-            stockfish = new Worker('./public/stockfish/stockfish.wasm');
+            stockfish = new Worker('./stockfish/stockfish.js');
             
             stockfish.addEventListener('message', function(e) {
                 const line = e.data;
@@ -229,8 +229,9 @@ function initStockfish() {
 
 // Handle engine output
 function handleEngineOutput(line) {
-    $('#engineOutput').append(line + '\n');
-    $('#engineOutput').scrollTop($('#engineOutput')[0].scrollHeight);
+    const $engineOutput = $('#engineOutput');
+    $engineOutput.append($('<div>').text(line)); // Use .text() to prevent XSS
+    $engineOutput.scrollTop($engineOutput[0].scrollHeight);
     
     // Parse evaluation
     if (line.includes('score cp')) {
@@ -361,10 +362,11 @@ function displayFavorites(favoritesList) {
         const date = new Date(item.date).toLocaleDateString();
         const $item = $(`
             <div class="favorite-item">
-                <span>${item.fen.substring(0, 30)}...</span>
+                <span></span>
                 <span>${date}</span>
             </div>
         `);
+        $item.find('span:first-child').text(item.fen.substring(0, 30) + '...');
         
         $item.on('click', () => {
             positions = [item.fen];

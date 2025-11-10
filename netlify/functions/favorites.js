@@ -1,7 +1,35 @@
 // Store favorites in-memory (for demo) or use Netlify Blobs
-const favorites = new Map();
+const fs = require('fs').promises;
+const path = require('path');
+
+const FAVORITES_FILE = path.resolve(__dirname, 'favorites.json');
+
+async function readFavorites() {
+    try {
+        const data = await fs.readFile(FAVORITES_FILE, 'utf8');
+        return new Map(JSON.parse(data));
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return new Map();
+        }
+        throw error;
+    }
+}
+
+async function writeFavorites(favoritesMap) {
+    await fs.writeFile(FAVORITES_FILE, JSON.stringify(Array.from(favoritesMap.entries())), 'utf8');
+}
 
 exports.handler = async (event, context) => {
+    // WARNING: This is a demo implementation for persistence using a local JSON file.
+    // It is NOT production-ready. In a real application, you would use a database
+    // like Netlify Blobs, FaunaDB, or a similar persistent storage solution.
+    //
+    // Also, this implementation lacks user authentication and authorization.
+    // Any user can add, view, or delete any favorite. For a production application,
+    // you MUST implement proper authentication (e.g., Netlify Identity) and
+    // authorization to ensure users can only manage their own favorites.
+    
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
@@ -18,6 +46,8 @@ exports.handler = async (event, context) => {
     }
 
     try {
+        const favorites = await readFavorites();
+
         // GET - Retrieve favorites
         if (event.httpMethod === 'GET') {
             const params = event.queryStringParameters || {};
@@ -50,6 +80,7 @@ exports.handler = async (event, context) => {
                 fen: data.fen,
                 date: new Date().toISOString()
             });
+            await writeFavorites(favorites);
 
             return {
                 statusCode: 201,
@@ -74,6 +105,7 @@ exports.handler = async (event, context) => {
             } else {
                 favorites.delete(id);
             }
+            await writeFavorites(favorites);
 
             return {
                 statusCode: 200,
