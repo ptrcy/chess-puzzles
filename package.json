@@ -1,0 +1,12 @@
+{
+  "name": "chess-fen-analyzer",
+  "version": "1.0.0",
+  "description": "Chess FEN position analyzer with Stockfish",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build required'"
+  },
+  "devDependencies": {
+    "netlify-cli": "^15.0.0"
+  }
+}
