@@ -280,10 +280,15 @@ function stopAnalysis() {
     analyzing = false;
     $('#analyzeBtn').show();
     $('#stopAnalysisBtn').hide();
-    
+
     if (stockfish) {
         stockfish.postMessage('stop');
     }
+
+    // Reset to initial state
+    $('#evalBar').css('width', '50%');
+    $('#evalText').text('0.0');
+    $('#engineOutput').text('Engine ready');
 }
 
 // Analyze current position

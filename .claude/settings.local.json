@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_serena_serena__list_dir",
+      "mcp__plugin_serena_serena__activate_project",
+      "mcp__plugin_serena_serena__replace_content",
+      "mcp__plugin_serena_serena__insert_before_symbol",
+      "mcp__plugin_serena_serena__insert_after_symbol",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(gh repo create:*)",
+      "Bash(git push:*)",
+      "Bash(node build.cjs:*)",
+      "Bash(git commit:*)",
+      "Bash(npx netlify-cli:*)",
+      "Bash(bun run build)",
+      "Bash(bun:*)",
+      "Bash(netlify deploy:*)",
+      "Bash(node -e:*)",
+      "Bash(node:*)",
+      "WebFetch(domain:commons.wikimedia.org)",
+      "WebSearch",
+      "Bash(curl:*)",
+      "mcp__plugin_serena_serena__find_symbol",
+      "mcp__plugin_serena_serena__replace_symbol_body",
+      "mcp__plugin_serena_serena__get_symbols_overview",
+      "mcp__plugin_serena_serena__search_for_pattern",
+      "mcp__plugin_serena_serena__read_file",
+      "mcp__plugin_serena_serena__think_about_task_adherence",
+      "mcp__plugin_serena_serena__think_about_whether_you_are_done",
+      "mcp__netlify__netlify-project-services-reader",
+      "mcp__netlify__netlify-deploy-services-updater",
+      "Bash(python -c:*)",
+      "Bash(ls:*)"
+    ]
+  }
+}

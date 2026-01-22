@@ -1,0 +1,5 @@
+node_modules
+.DS_Store
+Thumbs.db
+.netlify
+a_make_this_image_a_tr.png

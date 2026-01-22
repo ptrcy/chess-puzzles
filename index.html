@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess FEN Analyzer</title>
+    <title>Chess Puzzle Hub</title>
     <!--
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://code.jquery.com https://unpkg.com https://cdnjs.cloudflare.com; connect-src 'self' /.netlify/functions; img-src 'self' https://chessboardjs.com data:; style-src 'self' 'unsafe-inline' https://unpkg.com;">
     WARNING: 'unsafe-eval' is used in script-src due to the Stockfish.js WebAssembly module.
@@ -302,7 +302,10 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Chess FEN Analyzer</h1>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="logo.png" alt="Chess Puzzle Hub" height="60" style="mix-blend-mode: lighten;">
+                <h1 style="font-size: 1.5rem; margin: 0;">Chess Puzzle Hub</h1>
+            </div>
             <div class="file-upload">
                 <button class="btn">Upload FEN File</button>
                 <input type="file" id="fenFileInput" accept=".txt">
