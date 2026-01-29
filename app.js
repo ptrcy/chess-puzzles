@@ -43,7 +43,19 @@ function setupEventHandlers() {
     $('#stopAnalysisBtn').on('click', stopAnalysis);
     $('#filterBtn').on('click', filterFavorites);
     $('#clearFilterBtn').on('click', () => loadFavorites());
-    
+
+    // Go to position input
+    $('#goToBtn').on('click', () => {
+        const num = parseInt($('#goToInput').val(), 10);
+        if (!isNaN(num)) goToPosition(num);
+    });
+    $('#goToInput').on('keypress', function(e) {
+        if (e.which === 13) { // Enter key
+            const num = parseInt($(this).val(), 10);
+            if (!isNaN(num)) goToPosition(num);
+        }
+    });
+
     // Tab switching
     $('.tab').on('click', function() {
         const tabName = $(this).data('tab');
@@ -85,18 +97,33 @@ function handleFileUpload(e) {
 }
 
 // Load a position by index
-function loadPosition(index) {
+function loadPosition(index, direction = 1) {
     if (index < 0 || index >= positions.length) return;
-    
+
     const fen = positions[index];
-    game.load(fen);
+    try {
+        const loaded = game.load(fen);
+        if (!loaded) {
+            throw new Error('Invalid FEN');
+        }
+    } catch (e) {
+        // Bad FEN, skip to next valid position
+        showStatus(`Skipping invalid FEN at position ${index + 1}`, 'error');
+        const nextIndex = index + direction;
+        if (nextIndex >= 0 && nextIndex < positions.length) {
+            currentPositionIndex = nextIndex;
+            loadPosition(nextIndex, direction);
+        }
+        return;
+    }
+
     board.position(fen);
     originalPosition = fen;
     moveHistory = [];
-    
+
     updateUI();
     updateMoveList();
-    
+
     if (analyzing) {
         analyzePosition();
     }
@@ -107,7 +134,18 @@ function navigatePosition(direction) {
     const newIndex = currentPositionIndex + direction;
     if (newIndex >= 0 && newIndex < positions.length) {
         currentPositionIndex = newIndex;
-        loadPosition(newIndex);
+        loadPosition(newIndex, direction);
+    }
+}
+
+// Jump to a specific position by number
+function goToPosition(positionNumber) {
+    const index = positionNumber - 1; // Convert 1-based to 0-based
+    if (index >= 0 && index < positions.length) {
+        currentPositionIndex = index;
+        loadPosition(index);
+    } else {
+        showStatus(`Position ${positionNumber} not found (1-${positions.length})`, 'error');
     }
 }
 
