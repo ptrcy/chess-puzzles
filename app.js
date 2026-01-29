@@ -43,7 +43,24 @@ function setupEventHandlers() {
     $('#stopAnalysisBtn').on('click', stopAnalysis);
     $('#filterBtn').on('click', filterFavorites);
     $('#clearFilterBtn').on('click', () => loadFavorites());
-    
+
+    // Position navigation input
+    $('#positionInput').on('keypress', function(e) {
+        if (e.which === 13) { // Enter key
+            const posNum = parseInt($(this).val(), 10);
+            if (!isNaN(posNum)) {
+                goToPosition(posNum);
+            }
+        }
+    });
+
+    $('#goToPositionBtn').on('click', function() {
+        const posNum = parseInt($('#positionInput').val(), 10);
+        if (!isNaN(posNum)) {
+            goToPosition(posNum);
+        }
+    });
+
     // Tab switching
     $('.tab').on('click', function() {
         const tabName = $(this).data('tab');
@@ -87,19 +104,51 @@ function handleFileUpload(e) {
 // Load a position by index
 function loadPosition(index) {
     if (index < 0 || index >= positions.length) return;
-    
+
     const fen = positions[index];
-    game.load(fen);
+
+    // Try to load the FEN, skip to next if invalid
+    try {
+        const loaded = game.load(fen);
+        if (!loaded) {
+            showStatus(`Invalid FEN at position ${index + 1}, skipping...`, 'error');
+            skipToNextValidPosition(index);
+            return;
+        }
+    } catch (e) {
+        showStatus(`Invalid FEN at position ${index + 1}, skipping...`, 'error');
+        skipToNextValidPosition(index);
+        return;
+    }
+
     board.position(fen);
     originalPosition = fen;
     moveHistory = [];
-    
+
     updateUI();
     updateMoveList();
-    
+    updateTurnIndicator();
+
     if (analyzing) {
         analyzePosition();
     }
+}
+
+// Skip to the next valid position when current FEN is invalid
+function skipToNextValidPosition(fromIndex) {
+    for (let i = fromIndex + 1; i < positions.length; i++) {
+        try {
+            const tempGame = new Chess();
+            if (tempGame.load(positions[i])) {
+                currentPositionIndex = i;
+                loadPosition(i);
+                return;
+            }
+        } catch (e) {
+            continue;
+        }
+    }
+    showStatus('No more valid positions found', 'error');
 }
 
 // Navigate through positions
@@ -119,6 +168,7 @@ function resetPosition() {
         moveHistory = [];
         updateMoveList();
         updateUI();
+        updateTurnIndicator();
     }
 }
 
@@ -160,13 +210,14 @@ function onDrop(source, target) {
         to: target,
         promotion: 'q' // Always promote to queen for simplicity
     });
-    
+
     if (move === null) return 'snapback';
-    
+
     moveHistory.push(move);
     updateMoveList();
     updateUI();
-    
+    updateTurnIndicator();
+
     if (analyzing) {
         analyzePosition();
     }
@@ -202,6 +253,7 @@ function goToMove(moveIndex) {
     }
     board.position(game.fen());
     updateUI();
+    updateTurnIndicator();
 }
 
 // Initialize Stockfish
@@ -397,4 +449,28 @@ function showStatus(message, type) {
     $status.removeClass('success error').addClass(type);
     $status.text(message).show();
     setTimeout(() => $status.fadeOut(), 3000);
+}
+
+// Navigate to a specific position number
+function goToPosition(positionNumber) {
+    const index = positionNumber - 1;
+    if (index >= 0 && index < positions.length) {
+        currentPositionIndex = index;
+        loadPosition(index);
+    } else {
+        showStatus(`Position ${positionNumber} does not exist (1-${positions.length})`, 'error');
+    }
+}
+
+// Update the turn indicator by styling pieces
+function updateTurnIndicator() {
+    const turn = game.turn();
+    // Remove existing turn indicator styles
+    $('#myBoard .turn-to-move').removeClass('turn-to-move');
+
+    // Add highlight class to pieces of the player to move
+    setTimeout(() => {
+        const piecePrefix = turn === 'w' ? 'w' : 'b';
+        $('#myBoard img[data-piece^="' + piecePrefix + '"]').addClass('turn-to-move');
+    }, 100);
 }
